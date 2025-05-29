@@ -1,6 +1,7 @@
 function solution(id_list, report, k) {
     const reportCount ={};
     const reportList ={};
+    const reportedBy={};
     /*
     id_list.forEach((id) => {
         if(!reportList[id]) reportList[id]=[];
@@ -19,9 +20,10 @@ function solution(id_list, report, k) {
         if(!reportList[source]) reportList[source]=new Set();
         reportList[source].add(dest);
         
+        if (!reportedBy[dest]) reportedBy[dest] =new Set();
+        reportedBy[dest].add(source);
 
     });
-    
     //누적신고횟수 관리 
     for(const id in reportList){
         reportList[id].forEach((reportedId) =>{
@@ -30,21 +32,16 @@ function solution(id_list, report, k) {
     }
     //신고횟수가 k미만인 id는 reprotList에서 제거.
     //근데 k 미만인 id를 찾는게 키로 찾는게아니라 값을 찾아야되서 시간이 좀걸릴거같은데 괜찮은가..? 일단구현
+    
+    const answer = id_list.map((id) => 0);
+    
     for(const id in reportCount){
-        if(reportCount[id] < k){
-            for(const i in reportList){
-                if(reportList[i].has(id)) reportList[i].delete(id);
-            }
+        if(reportCount[id] >= k){
+            reportedBy[id].forEach((reportId)=>{
+                answer[id_list.indexOf(reportId)]++;
+            })
         }
     }
-    
-    const answer = [];
-    id_list.forEach((id) => {
-        if(!reportList[id]){
-            answer.push(0);
-        } else {
-            answer.push(reportList[id].size);
-        }
-    })
+
     return answer;
 }
